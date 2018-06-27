@@ -16,52 +16,55 @@
 The script `run_analysis.R` performs the following process to clean up the data
 and create tiny data sets:
 
-1. Merge the training and test sets to create one data set.
+## Code Book for Course Project
 
-2. Reads `features.txt` and uses only the measurements on the mean and standard
-   deviation for each measurement. 
+### Overview
 
-3. Reads `activity_labels.txt` and applies human readable activity names to
-   name the activities in the data set.
+[Source](https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip) of the original data:
 
-4. Labels the data set with descriptive names. (Names are converted to lower
-   case; underscores and brackets are removed.)
+	https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
 
-5. Merges the features with activity labels and subject IDs. The result is
-   saved as `tidyData.txt`.
+[Full Description](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones) at the site where the data was obtained:
 
+	http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
+	
+### Process
+
+The script performs the following process to clean up the data
+and create tiny data sets:
+
+1. Merges the training and the test sets to create one data set.
+2. Extracts only the measurements on the mean and standard deviation for each measurement.
+3. Uses descriptive activity names to name the activities in the data set
+4. Appropriately labels the data set with descriptive variable names.
+5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 ### Variables
 
-- testData - table contents of `test/X_test.txt`
-- trainData - table contents of `train/X_train.txt`
-- X - Measurement data. Combined data set of the two above variables
-- testSub - table contents of `test/subject_test.txt`
-- trainSub - table contents of `test/subject_train.txt`
-- S - Subjects. Combined data set of the two above variables
-- testLabel - table contents of `test/y_test.txt`
-- trainLabel - table contents of `train/y_train.txt`
-- Y - Data Labels. Combined data set of the two above variables. 
-- featuresList - table contents of `features.txt`
-- features - Names of for data columns derived from featuresList
-- keepColumns - logical vector of which features to use in tidy data set
-- activities - table contents of `activity_labels.txt`. Human readable
-- tidyData - subsetted, human-readable data ready for output according to
-  project description.
-- uS - unique subjects from S
-- nS - number of unique subjects
-- nA - number of activities
-- nC - number of columns in tidyData
-- td - second tiny data set with average of each variable for each activity and
-  subject
+- X_test - table contents of `test/X_test.txt`
+- X_train - table contents of `train/X_train.txt`
+- Y_test - table contents of `test/Y_test.txt`
+- Y_train - table contents of `train/Y_train.txt`
+- subject_test - table contents of 'test/subject_test.txt'
+- subject_train - table contents of 'test/subject_train.txt'
+- feature - table contents of 'features.txt'
+- activity_label - table contents of 'activity_labels.txt'
+- colnames (X_test) - feature [,2]
+- colnames (X_train) - feature [,2]
+- colnames (Y_test) - "activity id"
+- colnames (Y_train) - "activity id"
+- colnames(subject_test) - "subjectid"
+- colnames(subject_train) - "subjectid"
+- setAllInOne - combined dataset
+- mean_and_std - Create vector for defining ID, mean and standard deviation
+- setall_mean_std - Making nessesary subset from setall
+- setallactivity - Using descriptive activity names to name the activities in the data set
+- sectidyset - making tidy dataset
 
-### Output
+# Output
 
-#### tidyData.txt
+#### Sectidyset.txt
 
 `tidyData.txt` is a 10299x68 data frame.
 
-- The first column contains subject IDs.
-- The second column contains activity names.
-- The last 66 columns are measurements.
-- Subject IDs are integers between 1 and 30.
+
