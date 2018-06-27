@@ -12,57 +12,60 @@
 	
 ### Process
 
-The script `run_analysis.R` performs the following process to clean up the data
+The script performs the following process to clean up the data
 and create tiny data sets:
 
-1. Merge the training and test sets to create one data set.
-
-2. Reads `features.txt` and uses only the measurements on the mean and standard
-   deviation for each measurement. 
-
-3. Reads `activity_labels.txt` and applies human readable activity names to
-   name the activities in the data set.
-
-4. Labels the data set with descriptive names. (Names are converted to lower
-   case; underscores and brackets are removed.)
-
-5. Merges the features with activity labels and subject IDs. The result is
-   saved as `tidyData.txt`.
+Merges the training and the test sets to create one data set.
+Extracts only the measurements on the mean and standard deviation for each measurement.
+Uses descriptive activity names to name the activities in the data set
+Appropriately labels the data set with descriptive variable names.
+From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 
-### Variables
+# test set data extract
+X_test <- read.table("/.data/UCI HAR Dataset/test/X_test.txt")
+y_test <- read.table("/.data/UCI HAR Dataset/test/y_test.txt")
+subject_test <- read.table("/.data/UCI HAR Dataset/test/subject_test.txt")
+# training set data extract
+X_train <- read.table("/.data/UCI HAR Dataset/train/X_train.txt")
+y_train <- read.table("/.data/UCI HAR Dataset/train/y_train.txt")
+subject_train <- read.table("/.data/UCI HAR Dataset/train/subject_train.txt")
+# features data extract
+feature <- read.table("/.data/UCI HAR Dataset/features.txt")
+# activity labels data extract
+activity_label <- read.table("/.data/UCI HAR Dataset/activity_labels.txt")
+# assignment column names
+colnames(X_test) <- feature[,2]
+colnames(y_test) <- "activityid"
+colnames(subject_test) <- "subjectid"
 
-- testData - table contents of `test/X_test.txt`
-- trainData - table contents of `train/X_train.txt`
-- X - Measurement data. Combined data set of the two above variables
-- testSub - table contents of `test/subject_test.txt`
-- trainSub - table contents of `test/subject_train.txt`
-- S - Subjects. Combined data set of the two above variables
-- testLabel - table contents of `test/y_test.txt`
-- trainLabel - table contents of `train/y_train.txt`
-- Y - Data Labels. Combined data set of the two above variables. 
-- featuresList - table contents of `features.txt`
-- features - Names of for data columns derived from featuresList
-- keepColumns - logical vector of which features to use in tidy data set
-- activities - table contents of `activity_labels.txt`. Human readable
-- tidyData - subsetted, human-readable data ready for output according to
-  project description.
-- uS - unique subjects from S
-- nS - number of unique subjects
-- nA - number of activities
-- nC - number of columns in tidyData
-- td - second tiny data set with average of each variable for each activity and
-  subject
+colnames(X_train) <- feature[,2]
+colnames(y_train) <- "activityid"
+colnames(subject_train) <- "subjectid"
 
-### Output
+colnames(activity_label) <- c("activityid", "activitytype")
 
-#### tidyData.txt
+# merge the data set
+mrg_test <- cbind(X_test, y_test, subject_test)
+mrg_train <- cbind(X_train, y_train, subject_train)
+setAllInOne <- rbind(mrg_test, mrg_train)
 
-`tidyData.txt` is a 10299x68 data frame.
+# reading colunm names
+colnames <- colnames(setAllInOne)
 
-- The first column contains subject IDs.
-- The second column contains activity names.
-- The last 66 columns are measurements.
-- Subject IDs are integers between 1 and 30.
+# Create vector for defining ID, mean and standard deviation
+mean_and_std <- (grepl("activityid", colnames) |
+                   grepl("subjectid", colnames) |
+                   grepl("mean..", colnames) |
+                   grepl("std..", colnames))
+# Making nessesary subset from setall
+setall_mean_std <- setAllInOne[ , mean_and_std == TRUE]
+# Using descriptive activity names to name the activities in the data set
+setallactivity <- merge(setall_mean_std, activity_label, by = "activityid", all.X = TRUE)
+# Making second tidy data set
+sectidyset <- aggregate(.~subjectid + activityid, setallactivity, mean)
+sectidyset <- sectidyset[order(sectidyset$subjectid, sectidyset$activityid),]
+
+write.table(sectidyset, file = "sectidyset.txt", row.names = FALSE)
 
 
