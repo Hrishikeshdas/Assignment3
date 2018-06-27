@@ -65,6 +65,6 @@ and create tiny data sets:
 
 #### Sectidyset.txt
 
-`tidyData.txt` is a 10299x68 data frame.
+`Sectidyset.txt` is a 10299x68 data frame.
 
 
